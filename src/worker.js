@@ -26,7 +26,7 @@ export default {
 
 async function handle(req, env) {
   {
-    if (!env.HUB) return json({ error: 'Durable-Object-Binding HUB fehlt (wrangler.toml deployen!)' }, 500);
+    if (!env.FLEET_HUB) return json({ error: 'Durable-Object-Binding FLEET_HUB fehlt (wrangler.toml deployen!)' }, 500);
     const url = new URL(req.url);
     if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: CORS });
 
@@ -34,18 +34,18 @@ async function handle(req, env) {
     if ((req.headers.get('Upgrade') || '').toLowerCase() === 'websocket') {
       const m = /^\/room\/([\w-]{1,40})/.exec(url.pathname);
       const name = m ? m[1] : 'main';
-      return env.HUB.get(env.HUB.idFromName('room:' + name)).fetch(req);
+      return env.FLEET_HUB.get(env.FLEET_HUB.idFromName('room:' + name)).fetch(req);
     }
 
     if (url.pathname.startsWith('/api/')) {
-      return env.HUB.get(env.HUB.idFromName('admin')).fetch(req);
+      return env.FLEET_HUB.get(env.FLEET_HUB.idFromName('admin')).fetch(req);
     }
 
-    return new Response('Fleet Command Server läuft ✓', { headers: { ...CORS, 'Content-Type': 'text/plain; charset=utf-8' } });
+    return new Response('Fleet Command Server v2 läuft ✓', { headers: { ...CORS, 'Content-Type': 'text/plain; charset=utf-8' } });
   }
 }
 
-export class Hub {
+export class FleetHub {
   constructor(state, env) {
     this.state = state;
     this.env = env;
