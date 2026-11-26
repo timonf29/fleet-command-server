@@ -15,6 +15,18 @@ const json = (o, s = 200) =>
 
 export default {
   async fetch(req, env) {
+    try {
+      return await handle(req, env);
+    } catch (e) {
+      // Fehler immer MIT CORS-Headern zurückgeben, sonst meldet der Browser nur "nicht erreichbar"
+      return json({ error: 'Serverfehler: ' + (e && e.message ? e.message : e) }, 500);
+    }
+  },
+};
+
+async function handle(req, env) {
+  {
+    if (!env.HUB) return json({ error: 'Durable-Object-Binding HUB fehlt (wrangler.toml deployen!)' }, 500);
     const url = new URL(req.url);
     if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: CORS });
 
@@ -30,8 +42,8 @@ export default {
     }
 
     return new Response('Fleet Command Server läuft ✓', { headers: { ...CORS, 'Content-Type': 'text/plain; charset=utf-8' } });
-  },
-};
+  }
+}
 
 export class Hub {
   constructor(state, env) {
