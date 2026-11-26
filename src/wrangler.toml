@@ -4,9 +4,9 @@ compatibility_date = "2024-11-01"
 workers_dev = true
 
 [[durable_objects.bindings]]
-name = "HUB"
-class_name = "Hub"
+name = "FLEET_HUB"
+class_name = "FleetHub"
 
 [[migrations]]
-tag = "v1"
-new_sqlite_classes = ["Hub"]
+tag = "fleet-v2"
+new_sqlite_classes = ["FleetHub"]
